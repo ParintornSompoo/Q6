@@ -1,4 +1,3 @@
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 void setup() {
   size(200,200);
@@ -9,12 +8,9 @@ void setup() {
     String xmlString = toXML(root);
     XML xml = parseXML(xmlString);
     saveXML(xml, "save.xml");
-    // setup regex
-    Pattern p = Pattern.compile("x.");
-    
     // search from XML
     XML saveXML = loadXML("save.xml");
-    String file = searchXML(saveXML,"hello");
+    ArrayList<String> file = searchXML(saveXML,"^hello.{0,}");
     println(file);
   }
   else {
@@ -65,22 +61,30 @@ String toXML(String path) {
   root += "</folder>";
   return root;
 }
-String searchXML(XML xml,String file) {
+ArrayList<String> searchXML(XML xml,String regex) {
+  /**
+  * @param xml
+  * @param regex
+  */
+  ArrayList<String> found = new ArrayList<String>();
   XML[] filesXML = xml.getChildren("file");
   XML[] folderXML = xml.getChildren("folder");
   for (XML fileXML : filesXML) {
-    if (fileXML.getContent().equals(file)) {
-      return xml.getString("name") + '/' + file;
+    if (Pattern.matches(regex,fileXML.getContent())) {
+      String f = xml.getString("name") + '/' + fileXML.getContent();
+      found.add(f);
     }
   }
   for (XML folder : folderXML) {
-    if (folder.getString("name").equals(file)) {
-      return xml.getString("name") + '/' + file;
+    if (Pattern.matches(regex,folder.getString("name"))) {
+      String f = xml.getString("name") + '/' + folder.getString("name");;
+      found.add(f); 
     }
-    String path = searchXML(folder,file);
-    if (path != null) {
-      return xml.getString("name") + '/' + path;
+    ArrayList<String> path = searchXML(folder,regex);
+    for (String p:path) {
+      p = xml.getString("name") + '/' + p;
+      found.add(p);
     }
   }
-  return null;
+  return found;
 }

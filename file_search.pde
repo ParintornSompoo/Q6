@@ -1,15 +1,20 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 void setup() {
   size(200,200);
-  String root = search("D:/VS code workspace","Android project");    // enter file name as 2nd args
+  String root = search("/home","VS Code Workspace");    // enter file name as 2nd args
   if (root != null) {
     println(root);
     // save to XML
     String xmlString = toXML(root);
     XML xml = parseXML(xmlString);
     saveXML(xml, "save.xml");
+    // setup regex
+    Pattern p = Pattern.compile("x.");
+    
     // search from XML
     XML saveXML = loadXML("save.xml");
-    String file = searchXML(saveXML,"Box2D");
+    String file = searchXML(saveXML,"hello");
     println(file);
   }
   else {

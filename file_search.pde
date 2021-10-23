@@ -2,7 +2,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 void setup() {
   size(200,200);
-  String root = search("/home","VS Code Workspace");    // enter file name as 2nd args
+  String root = search("E:/ProgramingFolder","file_......");    // enter file name as 2nd args
   if (root != null) {
     println(root);
     // save to XML
@@ -31,11 +31,13 @@ String search(String rootPath, String fileName) {
   File[] files = f.listFiles();
   if (files != null && files.length > 0) {             // folder isn't empty
     for (File file : files) {
-      if (file.getName().equals(fileName)) {           // found file
-        String path = rootPath+"/"+fileName;
+      if (Pattern.matches(fileName, file.getName())) {           // found file
+        println("\n\n\n\n\nFound. \n");
+        String path = rootPath+"/"+file.getName();
         return path;
       }
       if (file.isDirectory()) {                        
+        println("Processing in "+file.getAbsolutePath());
         String path = search(file.getAbsolutePath(),fileName);       // traverse
         if (path != null) {
           return path;
